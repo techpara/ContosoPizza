@@ -1,8 +1,15 @@
+using ContosoPizza.Filters;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<HttpResponseExceptionFilter>();
+});
+
+//.AddXmlSerializerFormatters();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -15,7 +22,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     //app.UseSwaggerUI();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
+
+    app.UseExceptionHandler("/error-development");
+
 }
+else
+{
+    app.UseExceptionHandler("/error");
+}
+
 
 app.UseHttpsRedirection();
 

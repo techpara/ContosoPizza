@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ContosoPizzaNew.Services;
 using ContosoPizzaNew.Models;
+using Microsoft.AspNetCore.Diagnostics;
+
 namespace ContosoPizzaNew.Controllers
 {
     [ApiController]
@@ -13,11 +15,16 @@ namespace ContosoPizzaNew.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pizza))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Pizza>> GetAll() => PizzaService.GetAll();
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pizza))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Pizza> Get(int id)
         {
+            //throw new Exception("Sample exception.");
             var pizza = PizzaService.Get(id);
 
             if (pizza == null)
@@ -66,5 +73,27 @@ namespace ContosoPizzaNew.Controllers
 
             return Ok();
         }
+
+        [Route("/error-development")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public IActionResult HandleErrorDevelopment([FromServices] IHostEnvironment hostEnvironment)
+        {
+            if (!hostEnvironment.IsDevelopment())
+            {
+                return NotFound();
+            }
+
+            var exceptionHandlerFeature =
+                HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+
+            return Problem(
+                detail: exceptionHandlerFeature.Error.StackTrace,
+                title: exceptionHandlerFeature.Error.Message);
+        }
+
+        [Route("/error")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public IActionResult HandleError() =>
+         Problem();
     }
 }
