@@ -17,7 +17,11 @@ namespace ContosoPizzaNew.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pizza))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<List<Pizza>> GetAll() => PizzaService.GetAll();
+        public ActionResult<List<Pizza>> GetAll()
+        {
+            throw new Exception("Sample exception.");
+            PizzaService.GetAll();
+        }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pizza))]
@@ -44,7 +48,7 @@ namespace ContosoPizzaNew.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(int id, Pizza pizza)
         {
-
+            throw new Exception("Sample exception.");
             if (id != pizza.Id)
                 return BadRequest();
 
